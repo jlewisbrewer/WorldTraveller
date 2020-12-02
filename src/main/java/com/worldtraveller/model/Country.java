@@ -24,6 +24,10 @@ public class Country {
         this.setLandArea(landArea);
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
