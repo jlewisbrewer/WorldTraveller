@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Node ###
+/node
+node_modules
+
+### WebPack ###
+/src/main/resources/static/built
