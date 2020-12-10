@@ -5,32 +5,55 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const client = require('./client');
 
-class App extends React.Component {
+class Application extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {countries: []};
+        this.state = {
+            countries: [],
+            x: 0,
+            y: 0
+        };
+
+        this.onMouseMove = this.onMouseMove.bind(this);
+    }
+
+    onMouseMove(e) {
+        this.setState({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
     }
 
     componentDidMount() {
-        client({method: 'GET', path: '/api/countries'}).done(response => {
-            this.setState({countries: response.entity._embedded.countries});
+        client({ method: 'GET', path: '/api/countries' }).done(response => {
+            this.setState({ countries: response.entity._embedded.countries });
         });
     }
 
+
+
     render() {
+        const x = this.state.x;
+        const y = this.state.y;
+
         console.log(this.state.countries);
+        console.log(this.state.x);
         return (
-            <CountryList countries= {
-                this.state.countries}/>
+            // https://stackoverflow.com/questions/42182481/getting-mouse-coordinates-in-react-and-jquery
+            <div ref="elem" className="container">
+                <div>
+                    <img onMouseMove={this.onMouseMove} alt="map of the world" src="https://www.freeworldmaps.net/outline/maps/world-map-outline.gif" width="908" height="455" />
+                </div>
+                <h1>Mouse coordinates: {x} {y}</h1>
+            </div>
         )
     }
 }
 
+
+
 class CountryList extends React.Component {
     render() {
         const countries = this.props.countries.map(country =>
-            <Country key = {country._links.self.href} country = {country}/>
+            <Country key={country._links.self.href} country={country} />
         );
         return (
             <table>
@@ -52,7 +75,7 @@ class CountryList extends React.Component {
 
 class Country extends React.Component {
     render() {
-        return(
+        return (
             <tr>
                 <td>
                     {this.props.country.name}
@@ -66,6 +89,12 @@ class Country extends React.Component {
 }
 
 ReactDOM.render(
-    <App />,
+    <Application />,
     document.getElementById('react')
-)
+);
+
+const element = <h3>This is a test!</h3>;
+ReactDOM.render(
+    element,
+    document.getElementById('test')
+);
