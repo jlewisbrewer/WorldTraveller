@@ -31,31 +31,28 @@ class Application extends React.Component {
         // Color at this coordinate
         const canvas = document.getElementById("mapCanvas");
         const ctx = canvas.getContext("2d");
-        // var pixelData = canvas.getContext('2d').getImageData(this.state.x, this.state.y, 1, 1);
- 
+        const white = new Uint8ClampedArray([255, 255, 255, 255]);
+        const blue = new Uint8ClampedArray([34, 167, 240, 175]);
 
-        var white = new Uint8ClampedArray([255, 255, 255, 255]);
-        var blue = new Uint8ClampedArray([34, 167, 240, 175]);
-
-        console.log(this.mapData.data);
-
-        this.floodFill(this.state.x, this.state.y, blue, white);
-        console.log(this.canvasWidth);
+        let pixelData = new Array();
         let pixelPos = (this.state.y * this.canvasWidth + this.state.x) * 4
-        console.log(pixelPos);
-        
-        for (var i = 0; i < 4; i++) {
-            console.log(this.mapData.data[pixelPos + i]);
+
+        for (let i = 0; i < 4; i++) {
+            pixelData[i] = this.mapData.data[pixelPos + i];
         }
-
+        
+        if (this.arrayEqauls(pixelData, blue)) {
+            this.floodFill(this.state.x, this.state.y, white, blue);
+        }
+        else {
+            this.floodFill(this.state.x, this.state.y, blue, white);
+        }
         ctx.putImageData(this.mapData, 0, 0);
-
-
     }
 
     floodFill(x, y, destColor, srcColor) {
 
-        var pixelPos = (y * this.canvasWidth + x) * 4;
+        let pixelPos = (y * this.canvasWidth + x) * 4;
         if (!this.matchColor(pixelPos, srcColor)) {
             return
         }
@@ -67,17 +64,16 @@ class Application extends React.Component {
 
     }
 
-
     matchColor(pixelPos, colorArray) {
-        var r = this.mapData.data[pixelPos];
-        var g = this.mapData.data[pixelPos + 1];
-        var b = this.mapData.data[pixelPos + 2];
+        let r = this.mapData.data[pixelPos];
+        let g = this.mapData.data[pixelPos + 1];
+        let b = this.mapData.data[pixelPos + 2];
 
         return (r == colorArray[0] && g == colorArray[1] && b == colorArray[2]);
     }
 
     colorPixel(pixelPos, colorArray) {
-        for(var i = 0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             this.mapData.data[pixelPos + i] = colorArray[i];
         }
     }
@@ -86,7 +82,7 @@ class Application extends React.Component {
         if (a.length != b.length) {
             return false;
         }
-        for (var i = 0; i < a.length; i++) {
+        for (let i = 0; i < a.length; i++) {
             if (a[i] != b[i]) {
                 return false;
             }
@@ -111,14 +107,7 @@ class Application extends React.Component {
         client({ method: 'GET', path: '/api/countries' }).done(response => {
             this.setState({ countries: response.entity._embedded.countries });
         });
-        // this.img = document.getElementById('img');
-        // this.canvas = document.createElement('canvas');
-        // this.canvas.width = this.img.width;
-        // this.canvas.height = this.img.height;
-        // this.canvas.getContext('2d').drawImage(this.img, 0, 0, this.img.width, this.img.height);
     }
-
-
 
     render() {
         const x = this.state.x;
@@ -136,46 +125,6 @@ class Application extends React.Component {
         );
     }
 }
-
-
-
-// class CountryList extends React.Component {
-//     render() {
-//         const countries = this.props.countries.map(country =>
-//             <Country key={country._links.self.href} country={country} />
-//         );
-//         return (
-//             <table>
-//                 <tbody>
-//                     <tr>
-//                         <th>
-//                             Country Name
-//                         </th>
-//                         <th>
-//                             Land Area
-//                         </th>
-//                     </tr>
-//                     {countries}
-//                 </tbody>
-//             </table>
-//         )
-//     }
-// }
-
-// class Country extends React.Component {
-//     render() {
-//         return (
-//             <tr>
-//                 <td>
-//                     {this.props.country.name}
-//                 </td>
-//                 <td>
-//                     {this.props.country.landArea}
-//                 </td>
-//             </tr>
-//         )
-//     }
-// }
 
 ReactDOM.render(
     <Application />,
