@@ -3,6 +3,8 @@ package com.worldtraveller.model;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "Coordinate")
 public class Coordinate {
@@ -11,6 +13,7 @@ public class Coordinate {
     private Long id;
     private int x;
     private int y;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;
@@ -22,6 +25,10 @@ public class Coordinate {
         this.x = x;
         this.y = y;
         this.country = country;
+    }
+
+    public Long getId() {
+        return id;
     }
 
 	public int getX() {
@@ -38,6 +45,17 @@ public class Coordinate {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public Country getCountry() {
+        return this.country;
+    }
+
+    public int getDistance(Coordinate coordinate) {
+        int width = Math.abs(this.x - coordinate.x);
+        int height = Math.abs(this.y - coordinate.y);
+
+        return (int) Math.ceil(Math.sqrt((width * width) + (height * height)));
     }
 
 }

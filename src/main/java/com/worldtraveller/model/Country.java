@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "Country")
 public class Country {
@@ -13,6 +15,7 @@ public class Country {
     private Long id;
     private String name;
     private int landArea;
+    @JsonManagedReference
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Coordinate> coordinates = new ArrayList<>();
 
