@@ -12,6 +12,8 @@ class Application extends React.Component {
         super(props);
         this.state = {
             countries: [],
+            selectedCountries: [],
+            currentCountries: [],
             x: 0,
             y: 0
         };
@@ -28,7 +30,6 @@ class Application extends React.Component {
     }
 
     onMouseClick(e) {
-        // Color at this coordinate
         const canvas = document.getElementById("mapCanvas");
         const ctx = canvas.getContext("2d");
         const white = new Uint8ClampedArray([255, 255, 255, 255]);
@@ -40,14 +41,47 @@ class Application extends React.Component {
         for (let i = 0; i < 4; i++) {
             pixelData[i] = this.mapData.data[pixelPos + i];
         }
+
+        client({ method: 'GET', path: '/search?x=' + this.state.x + '&y=' + this.state.y }).done(response => {
+            this.setState({ selectedCountries: response.entity._embedded.countries });
+        });
+
+        console.log("Selected countries: ");
+        console.log(this.state.selectedCountries);
+
         
+
+
         if (this.arrayEqauls(pixelData, blue)) {
             this.floodFill(this.state.x, this.state.y, white, blue);
+            // Check the selected countries
+            let country = this.findCountry(this.state.selectedCountries, blue)
+            if (country){
+                this.state.currentCountries.push(country)
+            }
+            console.log("Current countries: " + this.state.currentCountries);
+            
         }
         else {
             this.floodFill(this.state.x, this.state.y, blue, white);
+            // Check current countries
         }
         ctx.putImageData(this.mapData, 0, 0);
+    }
+
+    findCountry(countries, color) {
+        for(let i = 0; i < countries.length; i++) {
+            let coordinates = countries[i].coordinates;
+            for (let j = 0; j < coordinates.length; j++){
+                let pixelPos = (this.coordinates[j].y * this.canvasWidth + this.coordinates[j].x) * 4;
+
+                if (this.matchColor(pixelPos, color)) {
+                    return countries[i];
+                }
+
+            }
+        }
+        return null;
     }
 
     floodFill(x, y, destColor, srcColor) {
@@ -90,6 +124,7 @@ class Application extends React.Component {
         return true;
     }
 
+
     componentDidMount() {
         const canvas = document.getElementById("mapCanvas");
         const context = canvas.getContext("2d");
@@ -102,7 +137,6 @@ class Application extends React.Component {
             this.mapData = context.getImageData(0, 0, canvas.width, canvas.height);
 
         };
-
 
         client({ method: 'GET', path: '/api/countries' }).done(response => {
             this.setState({ countries: response.entity._embedded.countries });
@@ -121,6 +155,7 @@ class Application extends React.Component {
                     <canvas id="mapCanvas" width="1200px" height="601px" onMouseMove={this.onMouseMove} onClick={this.onMouseClick}></canvas>
                 </div>
                 <h1>Mouse coordinates: {x} {y}</h1>
+                <p>Country at coordinate:</p>
             </div>
         );
     }
