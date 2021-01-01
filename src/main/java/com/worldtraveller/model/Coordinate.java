@@ -55,7 +55,7 @@ public class Coordinate {
         int width = Math.abs(this.x - coordinate.x);
         int height = Math.abs(this.y - coordinate.y);
 
-        return (int) Math.ceil(Math.sqrt((width * width) + (height * height)));
+        return (int) Math.ceil(Math.sqrt((double)(width * width) + (height * height)));
     }
 
 }

@@ -11,7 +11,6 @@ import com.worldtraveller.repository.CountryRepository;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,40 +83,10 @@ public class CoordinateController {
                 }
             }
         }
-        
+
         logger.info("Valid countries length: " + validCountries.size());
 
         return CollectionModel.of(validCountries, linkTo(methodOn(CountryController.class).getCountries()).withSelfRel());
-    
-
-        // Iterable<Country> countries = countryRepository.findAll();
-        // Iterator<Country> countriesIterator = countries.iterator();
-
-        // List<Country> validCountries = new ArrayList<Country>();
-        // // List<EntityModel<Country>> result = new ArrayList<EntityModel<Country>>();
-
-
-        // while(countriesIterator.hasNext()) {
-        //     Country country = countriesIterator.next();
-        //     List<Coordinate> countryCoordinates = country.getCoordinates();
-        //     Iterator<Coordinate> countryCoordinatesIterator = countryCoordinates.iterator();
-
-        //     while(countryCoordinatesIterator.hasNext()) {
-        //         Coordinate countryCoordinate = countryCoordinatesIterator.next();
-        //         if (coordinate.getDistance(countryCoordinate) <= this.maxDistance) {
-        //             Country countryToAdd = countryRepository.findById(countryCoordinate.getCountry().getId()).orElseThrow(() ->new CountryNotFoundException(countryCoordinate.getCountry().getId()));
-
-        //             validCountries.add(countryToAdd);
-
-        //             break;
-        //         }
-        //     }
-        // }
-
-        // logger.info("Valid countries length: " + validCountries.size());
-
-
-        // return validCountries;
         
     }
 

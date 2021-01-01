@@ -3,10 +3,9 @@ var path = require('path');
 module.exports = {
     entry: './src/main/js/app.js',
     devtool: 'source-map',
-    cache: true,
+    watch: true,
     watchOptions: {
-        aggregateTimeout: 200,
-        poll: 1000,
+        poll: true,
         ignored: /node_modules/
     },
 
@@ -18,7 +17,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: path.join(__dirname, '.'),
+                test: path.join(__dirname, '../'),
                 exclude: /(node_modules)/,
                 use: [{
                     loader: 'babel-loader',
