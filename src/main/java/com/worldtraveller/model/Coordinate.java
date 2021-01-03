@@ -4,6 +4,9 @@ package com.worldtraveller.model;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "Coordinate")
@@ -13,9 +16,12 @@ public class Coordinate {
     private Long id;
     private int x;
     private int y;
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "country_id")
+    @JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+    )
     private Country country;
 
     public Coordinate() {

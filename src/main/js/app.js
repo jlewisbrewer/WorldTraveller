@@ -11,8 +11,8 @@ class Application extends React.Component {
     super(props);
     this.state = {
       countries: [],
-      possibleCountries: [],
-      selectedCountries: [],
+      possibleCoordinates: new Set(),
+      selectedCountries: new Set(),
       x: 0,
       y: 0,
     };
@@ -39,33 +39,45 @@ class Application extends React.Component {
     let y = this.state.y;
     let pixelPos = this.translateCoordinates(x, y);
     for (let i = 0; i < 4; i++) {
-        pixelData[i] = this.mapData.data[pixelPos + i];
+      pixelData[i] = this.mapData.data[pixelPos + i];
     }
 
     client({
       method: "GET",
       path: "/search?x=" + this.state.x + "&y=" + this.state.y,
     }).done((response) => {
-      this.setState({ possibleCountries: response.entity._embedded.countries });
-
+      this.setState({
+        possibleCoordinates: response.entity._embedded.coordinates,
+      });
 
       if (this.arrayEqauls(pixelData, blue)) {
         // Find the country in the
         console.log("This is blue");
         // Check the current countries
         this.floodFill(x, y, white, blue);
-
       } else {
         this.floodFill(x, y, blue, white);
-        // Check selected countries
-        let country = this.findCountry(this.state.possibleCountries, blue);
-        console.log("Country is: " + country.name);
+        // Find possible countries
+        let countries = this.findCountries(
+          this.state.possibleCoordinates,
+          blue
+        );
+        // Check to see if it is new
+        let country = new Set(
+          [...countries].filter((x) => !this.state.selectedCountries.has(x))
+        );
+        console.log(country);
         if (country) {
-          let coordinates = country.coordinates;
-          for (let i = 0; i < coordinates.length; i++) {
-            this.floodFill(coordinates[i].x, coordinates[i].y, blue, white);
+          for(let c of country) {
+            console.log("Country i:");
+            console.log(c);
+            let coordinates = c.coordinates;
+            for (let i = 0; i < coordinates.length; i++) {
+              this.floodFill(coordinates[i].x, coordinates[i].y, blue, white);
+            }
+            this.state.selectedCountries.add(c);
           }
-          this.state.selectedCountries.push(country);
+
         }
       }
       ctx.putImageData(this.mapData, 0, 0);
@@ -76,19 +88,21 @@ class Application extends React.Component {
     return (y * this.canvasWidth + x) * 4;
   }
 
-  findCountry(countries, color) {
-    for (let i = 0; i < countries.length; i++) {
-      let coordinates = countries[i].coordinates;
-      for (let j = 0; j < coordinates.length; j++) {
-        let pixelPos =
-          (coordinates[j].y * this.canvasWidth + coordinates[j].x) * 4;
+  findCountries(coordinates, color) {
+    let res = new Set();
 
-        if (this.matchColor(pixelPos, color)) {
-          return countries[i];
-        }
+    for (let i = 0; i < coordinates.length; i++) {
+      let pixelPos = this.translateCoordinates(
+        coordinates[i].x,
+        coordinates[i].y
+      );
+
+      if (this.matchColor(pixelPos, color)) {
+        res.add(coordinates[i].country);
       }
     }
-    return null;
+
+    return res;
   }
 
   floodFill(x, y, destColor, srcColor) {
