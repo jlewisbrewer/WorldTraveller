@@ -5,6 +5,7 @@ import worldMap from "../resources/templates/images/world-map-outline.gif";
 const React = require("react");
 const ReactDOM = require("react-dom");
 const client = require("./client");
+const { Map, Set } = require("immutable");
 
 class Application extends React.Component {
   constructor(props) {
@@ -33,6 +34,7 @@ class Application extends React.Component {
     const ctx = canvas.getContext("2d");
     const white = new Uint8ClampedArray([255, 255, 255, 255]);
     const blue = new Uint8ClampedArray([34, 167, 240, 175]);
+    const tempBlue = new Uint8ClampedArray([35, 168, 241, 176]);
 
     let pixelData = new Array();
     let x = this.state.x;
@@ -52,37 +54,68 @@ class Application extends React.Component {
 
       if (this.arrayEqauls(pixelData, blue)) {
         // Find the country in the
-        console.log("This is blue");
-        // Check the current countries
-        this.floodFill(x, y, white, blue);
+        // console.log("This is blue");
+        // console.log(this.state.possibleCoordinates);
+        this.floodFill(x, y, tempBlue, blue);
+        let possibleCountries = this.findCountries(
+          this.state.possibleCoordinates,
+          tempBlue
+        );
+        console.log("possible countries");
+        console.log(possibleCountries);
+        console.log("Selected countries");
+        console.log(this.state.selectedCountries);
+
+        console.log(this.state.selectedCountries.has(possibleCountries));
+        let definateCountries = possibleCountries.intersect(this.state.selectedCountries);
+        console.log("Country");
+        console.log(definateCountries);
+
+        // this.floodFill(x, y, blue, tempBlue);
+        // console.log("Country");
+        // console.log(country);
+        // if (country) {
+        //   for (let c of country) {
+        //     let coordinates = c.coordinates;
+        //     for (let i = 0; i < coordinates.length; i++) {
+        //       this.floodFill(coordinates[i].x, coordinates[i].y, white, blue);
+        //     }
+        //     this.state.selectedCountries.delete(c);
+        //   }
+        // }
       } else {
         this.floodFill(x, y, blue, white);
         // Find possible countries
-        let countries = this.findCountries(
+        let possibleCountries = this.findCountries(
           this.state.possibleCoordinates,
           blue
         );
-        // Check to see if it is new
-        let country = new Set(
-          [...countries].filter((x) => !this.state.selectedCountries.has(x))
-        );
-        console.log(country);
-        if (country) {
-          for(let c of country) {
-            console.log("Country i:");
-            console.log(c);
-            let coordinates = c.coordinates;
-            for (let i = 0; i < coordinates.length; i++) {
-              this.floodFill(coordinates[i].x, coordinates[i].y, blue, white);
-            }
-            this.state.selectedCountries.add(c);
-          }
 
+        // Check to see if it is new
+        // let country = new Set(
+        //   [...countries].filter((x) => !this.state.selectedCountries.has(x)));
+        let definateCountries = possibleCountries.subtract(this.state.selectedCountries);
+        console.log(definateCountries);
+        if (definateCountries) {
+          for (let m of definateCountries.values()) {
+
+            for (let c of m.values()) {
+              let coordinates = c.coordinates;
+              for (let i = 0; i < coordinates.length; i++) {
+                this.floodFill(coordinates[i].x, coordinates[i].y, blue, white);
+              }
+              this.state.selectedCountries = this.state.selectedCountries.add(Map({[c.id]: c }));
+            }
+          }
         }
       }
       ctx.putImageData(this.mapData, 0, 0);
     });
   }
+
+  findIntersection(a, b) {}
+
+  findDifference(a, b) {}
 
   translateCoordinates(x, y) {
     return (y * this.canvasWidth + x) * 4;
@@ -98,7 +131,9 @@ class Application extends React.Component {
       );
 
       if (this.matchColor(pixelPos, color)) {
-        res.add(coordinates[i].country);
+        let country = coordinates[i].country;
+        let id = country.id;
+        res = res.add(Map({[id]: country}));
       }
     }
 
@@ -168,7 +203,6 @@ class Application extends React.Component {
       // https://stackoverflow.com/questions/42182481/getting-mouse-coordinates-in-react-and-jquery
       <div ref="elem" className="container">
         <div>
-          {/* <img onMouseMove={this.onMouseMove} onClick={this.onMouseClick} alt="map of the world" id="img" src={worldMap} width="908" height="455" /> */}
           <canvas
             id="mapCanvas"
             width="1200px"
@@ -187,6 +221,3 @@ class Application extends React.Component {
 }
 
 ReactDOM.render(<Application />, document.getElementById("react"));
-
-const element = <h3>This is a test!</h3>;
-ReactDOM.render(element, document.getElementById("test"));
