@@ -5,13 +5,13 @@ import worldMap from "../resources/templates/images/world-map-outline.gif";
 const React = require("react");
 const ReactDOM = require("react-dom");
 const client = require("./client");
-const { Map, Set } = require("immutable");
+const { Set, fromJS, is } = require("immutable");
 
 class Application extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      countries: [],
+      // countries: [],
       possibleCoordinates: new Set(),
       selectedCountries: new Set(),
       x: 0,
@@ -53,36 +53,30 @@ class Application extends React.Component {
       });
 
       if (this.arrayEqauls(pixelData, blue)) {
-        // Find the country in the
-        // console.log("This is blue");
-        // console.log(this.state.possibleCoordinates);
         this.floodFill(x, y, tempBlue, blue);
         let possibleCountries = this.findCountries(
           this.state.possibleCoordinates,
           tempBlue
         );
-        console.log("possible countries");
-        console.log(possibleCountries);
-        console.log("Selected countries");
-        console.log(this.state.selectedCountries);
 
-        console.log(this.state.selectedCountries.has(possibleCountries));
-        let definateCountries = possibleCountries.intersect(this.state.selectedCountries);
-        console.log("Country");
-        console.log(definateCountries);
+        let definateCountries = possibleCountries.intersect(
+          this.state.selectedCountries
+        );
 
-        // this.floodFill(x, y, blue, tempBlue);
-        // console.log("Country");
-        // console.log(country);
-        // if (country) {
-        //   for (let c of country) {
-        //     let coordinates = c.coordinates;
-        //     for (let i = 0; i < coordinates.length; i++) {
-        //       this.floodFill(coordinates[i].x, coordinates[i].y, white, blue);
-        //     }
-        //     this.state.selectedCountries.delete(c);
-        //   }
-        // }
+        this.floodFill(x, y, blue, tempBlue);
+
+        if (definateCountries) {
+          for (let c of definateCountries.values()) {
+
+            for (let i = 0; i < c.get("coordinates").count(); i++) {
+              let coord = c.getIn(["coordinates", i]);
+              let cX = coord.get("x");
+              let cY = coord.get("y");
+              this.floodFill(cX, cY, white, blue);
+            }
+            this.state.selectedCountries = this.state.selectedCountries.delete(c);
+          }
+        }
       } else {
         this.floodFill(x, y, blue, white);
         // Find possible countries
@@ -90,32 +84,26 @@ class Application extends React.Component {
           this.state.possibleCoordinates,
           blue
         );
-
-        // Check to see if it is new
-        // let country = new Set(
-        //   [...countries].filter((x) => !this.state.selectedCountries.has(x)));
-        let definateCountries = possibleCountries.subtract(this.state.selectedCountries);
-        console.log(definateCountries);
+        // Check to see if it's not already selected
+        let definateCountries = possibleCountries.subtract(
+          this.state.selectedCountries
+        );
         if (definateCountries) {
-          for (let m of definateCountries.values()) {
+          for (let c of definateCountries.values()) {
 
-            for (let c of m.values()) {
-              let coordinates = c.coordinates;
-              for (let i = 0; i < coordinates.length; i++) {
-                this.floodFill(coordinates[i].x, coordinates[i].y, blue, white);
-              }
-              this.state.selectedCountries = this.state.selectedCountries.add(Map({[c.id]: c }));
+            for (let i = 0; i < c.get("coordinates").count(); i++) {
+              let coord = c.getIn(["coordinates", i]);
+              let cX = coord.get("x");
+              let cY = coord.get("y");
+              this.floodFill(cX, cY, blue, white);
             }
+            this.state.selectedCountries = this.state.selectedCountries.add(c);
           }
         }
       }
       ctx.putImageData(this.mapData, 0, 0);
     });
   }
-
-  findIntersection(a, b) {}
-
-  findDifference(a, b) {}
 
   translateCoordinates(x, y) {
     return (y * this.canvasWidth + x) * 4;
@@ -132,11 +120,9 @@ class Application extends React.Component {
 
       if (this.matchColor(pixelPos, color)) {
         let country = coordinates[i].country;
-        let id = country.id;
-        res = res.add(Map({[id]: country}));
+        res = res.add(fromJS(country));
       }
     }
-
     return res;
   }
 
@@ -190,9 +176,9 @@ class Application extends React.Component {
       this.mapData = context.getImageData(0, 0, canvas.width, canvas.height);
     };
 
-    client({ method: "GET", path: "/api/countries" }).done((response) => {
-      this.setState({ countries: response.entity._embedded.countries });
-    });
+    // client({ method: "GET", path: "/api/countries" }).done((response) => {
+    //   this.setState({ countries: response.entity._embedded.countries });
+    // });
   }
 
   render() {
