@@ -27,8 +27,6 @@ public class DatabaseLoader implements CommandLineRunner{
     public void run(String... strings) throws Exception {
 
         try {
-
-
             File file = new File(countryDataFile);
             Scanner reader = new Scanner(file);
             while(reader.hasNextLine()) {

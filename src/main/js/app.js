@@ -5,15 +5,16 @@ import worldMap from "../resources/templates/images/world-map-outline.gif";
 const React = require("react");
 const ReactDOM = require("react-dom");
 const client = require("./client");
-const { Set, fromJS, is } = require("immutable");
+const { Set, fromJS, is, Repeat } = require("immutable");
 
 class Application extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // countries: [],
+      totalArea: 0,
       possibleCoordinates: new Set(),
       selectedCountries: new Set(),
+      selectedCountryArea: 0,
       x: 0,
       y: 0,
     };
@@ -102,7 +103,19 @@ class Application extends React.Component {
         }
       }
       ctx.putImageData(this.mapData, 0, 0);
+
+      this.state.selectedCountryArea = this.calculateSelectedArea();
+
+      console.log(this.state.selectedCountryArea);
     });
+  }
+
+  calculateSelectedArea() {
+    let selectedArea = 0;
+    this.state.selectedCountries.valueSeq().forEach(c => selectedArea += c.get("landArea"));
+
+    return Math.round(selectedArea/this.state.totalArea *10000)/100;
+
   }
 
   translateCoordinates(x, y) {
@@ -176,6 +189,10 @@ class Application extends React.Component {
       this.mapData = context.getImageData(0, 0, canvas.width, canvas.height);
     };
 
+    client({ method: "GET", path: "/totalarea" }).done((response) => {
+      this.setState({ totalArea: response.entity });
+    })
+
     // client({ method: "GET", path: "/api/countries" }).done((response) => {
     //   this.setState({ countries: response.entity._embedded.countries });
     // });
@@ -184,6 +201,7 @@ class Application extends React.Component {
   render() {
     const x = this.state.x;
     const y = this.state.y;
+    const selectedArea = this.state.selectedCountryArea;
 
     return (
       // https://stackoverflow.com/questions/42182481/getting-mouse-coordinates-in-react-and-jquery
@@ -197,10 +215,9 @@ class Application extends React.Component {
             onClick={this.onMouseClick}
           ></canvas>
         </div>
-        <h1>
-          Mouse coordinates: {x} {y}
-        </h1>
-        <p>Country at coordinate:</p>
+        <h3>
+          You have visited {selectedArea}% of the world!
+        </h3>
       </div>
     );
   }

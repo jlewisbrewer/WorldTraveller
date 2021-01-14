@@ -42,4 +42,16 @@ public class CountryController {
 
         return countryModelAssembler.toModel(country); 
     }
+
+    @GetMapping("/totalarea")
+    public int getTotalArea() {
+        int totalArea = 0;
+        Iterable<Country> countries = countryRepository.findAll();
+        for (Country country : countries) {
+            totalArea += country.getLandArea();
+        }
+
+        return totalArea;
+
+    }
 }
