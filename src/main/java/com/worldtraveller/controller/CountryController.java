@@ -11,6 +11,8 @@ import com.worldtraveller.repository.CountryRepository;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CountryController {
     private final CountryRepository countryRepository;
     private final CountryModelAssembler countryModelAssembler;
+    private static Logger logger = LogManager.getLogger();
+
 
     public CountryController(CountryRepository countryRepository, CountryModelAssembler countryModelAssembler) {
         this.countryRepository = countryRepository;
@@ -36,10 +40,11 @@ public class CountryController {
         return CollectionModel.of(countries, linkTo(methodOn(CountryController.class).getCountries()).withSelfRel());
     }
 
-    @GetMapping("/countries/{id}")
-    public EntityModel<Country> getCountry(@PathVariable Long id) {
-        Country country = countryRepository.findById(id).orElseThrow(() -> new CountryNotFoundException(id));
-
+    @GetMapping("/countries/{name}")
+    public EntityModel<Country> getCountry(@PathVariable String name) {
+        logger.info("String name: " + name);
+        Country country = countryRepository.findByName(name);
+        logger.info(country.getName());
         return countryModelAssembler.toModel(country); 
     }
 
@@ -52,6 +57,5 @@ public class CountryController {
         }
 
         return totalArea;
-
     }
 }

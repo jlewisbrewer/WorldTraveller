@@ -15,9 +15,9 @@ public class Country {
     private Long id;
     private String name;
     private int landArea;
-    @JsonManagedReference
-    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Coordinate> coordinates = new ArrayList<>();
+    // @JsonManagedReference
+    // @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<Coordinate> coordinates = new ArrayList<>();
 
     public Country() {
     }
@@ -47,12 +47,12 @@ public class Country {
         this.landArea = landArea;
     }
 
-    public List<Coordinate> getCoordinates() {
-        return this.coordinates;
-    }
+    // public List<Coordinate> getCoordinates() {
+    //     return this.coordinates;
+    // }
 
-    public void setCoordinates(List<Coordinate> coordinates) {
-        this.coordinates = coordinates;
-    }
+    // public void setCoordinates(List<Coordinate> coordinates) {
+    //     this.coordinates = coordinates;
+    // }
 
 }

@@ -34,19 +34,18 @@ public class DatabaseLoader implements CommandLineRunner{
                 String countryLine = reader.nextLine();
                 String[] arr = countryLine.split("\t", 3);
                 Country country = new Country(arr[0], Integer.parseInt(arr[1].replace(",", "")));
-                List<Coordinate> coordinates = new ArrayList<>();
-                String[] coordinateStrings = arr[2].replace("[", "").replace("]", "").split("\\),\\(", -1);
+                // List<Coordinate> coordinates = new ArrayList<>();
+                // String[] coordinateStrings = arr[2].replace("[", "").replace("]", "").split("\\),\\(", -1);
 
-                for (int i = 0; i < coordinateStrings.length; i++) {
-                    String[] tempCoordinateStrings = coordinateStrings[i].replace("(", "").replace(")", "").replace(" ", "").split(",");
-                    List<Integer> coords = new ArrayList<>();
-                    for (int j = 0; j < tempCoordinateStrings.length; j++) {
-                        coords.add(Integer.parseInt(tempCoordinateStrings[j]));
-                    }
-                    Coordinate coordinate = new Coordinate(coords.get(0), coords.get(1), country);
-                    coordinates.add(coordinate);
-                }
-                country.setCoordinates(coordinates);
+                // for (int i = 0; i < coordinateStrings.length; i++) {
+                //     String[] tempCoordinateStrings = coordinateStrings[i].replace("(", "").replace(")", "").replace(" ", "").split(",");
+                //     List<Integer> coords = new ArrayList<>();
+                //     for (int j = 0; j < tempCoordinateStrings.length; j++) {
+                //         coords.add(Integer.parseInt(tempCoordinateStrings[j]));
+                //     }
+                //     Coordinate coordinate = new Coordinate(coords.get(0), coords.get(1), country);
+                //     coordinates.add(coordinate);
+                // }
 
                 this.countryRepository.save(country);
             }

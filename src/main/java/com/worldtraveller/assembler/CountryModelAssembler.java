@@ -14,6 +14,6 @@ import org.springframework.stereotype.Component;
 public class CountryModelAssembler implements RepresentationModelAssembler<Country, EntityModel<Country>> {
     @Override
     public EntityModel<Country> toModel(Country country) {
-        return EntityModel.of(country, linkTo(methodOn(CountryController.class).getCountry(country.getId())).withSelfRel(), linkTo(methodOn(CountryController.class).getCountries()).withRel("country"));
+        return EntityModel.of(country, linkTo(methodOn(CountryController.class).getCountry(country.getName())).withSelfRel(), linkTo(methodOn(CountryController.class).getCountries()).withRel("country"));
     }
 }
