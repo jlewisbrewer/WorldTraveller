@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.worldtraveller.assembler.CountryModelAssembler;
-import com.worldtraveller.exception.CountryNotFoundException;
 import com.worldtraveller.model.Country;
 import com.worldtraveller.repository.CountryRepository;
 

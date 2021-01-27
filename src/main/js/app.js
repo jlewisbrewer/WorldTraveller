@@ -16,14 +16,8 @@ class Application extends React.Component {
       selectedCountryArea: 0,
       selectedCountries: new Set(),
     };
-    this.img = {};
-    this.canvasHeight = 0;
-    this.canvasWidth = 0;
-    this.mapData = {};
     this.onMouseClick = this.onMouseClick.bind(this);
   }
-
-  onMouseMove(e) {}
 
   onMouseClick(e) {
     let countryName = e.target.className.baseVal;
@@ -35,7 +29,7 @@ class Application extends React.Component {
         path: "/countries/" + countryName,
       }).done((response) => {
         let country = response.entity;
-        console.log(response);
+
         if (this.selectedCountryContains(country.id)) {
           // unfill it
           let paths = d3.select("#worldMapSVG").selectAll("." + countryName);
@@ -94,7 +88,6 @@ class Application extends React.Component {
     const selectedArea = this.state.selectedCountryArea;
 
     return (
-      // https://stackoverflow.com/questions/42182481/getting-mouse-coordinates-in-react-and-jquery
       <div ref="elem" className="container">
         <svg
           id="worldMapSVG"

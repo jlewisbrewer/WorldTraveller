@@ -2,8 +2,6 @@ package com.worldtraveller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import com.worldtraveller.model.*;
@@ -34,19 +32,6 @@ public class DatabaseLoader implements CommandLineRunner{
                 String countryLine = reader.nextLine();
                 String[] arr = countryLine.split("\t", 3);
                 Country country = new Country(arr[0], Integer.parseInt(arr[1].replace(",", "")));
-                // List<Coordinate> coordinates = new ArrayList<>();
-                // String[] coordinateStrings = arr[2].replace("[", "").replace("]", "").split("\\),\\(", -1);
-
-                // for (int i = 0; i < coordinateStrings.length; i++) {
-                //     String[] tempCoordinateStrings = coordinateStrings[i].replace("(", "").replace(")", "").replace(" ", "").split(",");
-                //     List<Integer> coords = new ArrayList<>();
-                //     for (int j = 0; j < tempCoordinateStrings.length; j++) {
-                //         coords.add(Integer.parseInt(tempCoordinateStrings[j]));
-                //     }
-                //     Coordinate coordinate = new Coordinate(coords.get(0), coords.get(1), country);
-                //     coordinates.add(coordinate);
-                // }
-
                 this.countryRepository.save(country);
             }
             reader.close();

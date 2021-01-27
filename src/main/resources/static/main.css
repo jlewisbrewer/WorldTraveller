@@ -1,4 +1,10 @@
+body {
+    background-color: auto;
+}
+
+
 h2, h3 {
+    position: static;
     text-align: center;
     font-family: 'Garamond', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color: auto;
@@ -9,17 +15,15 @@ h2 {
     font-size: 2em;
 }
 
-body {
-    /* background-image: url("https://www.bioedonline.org/BioEd/cache/file/F0384960-7A58-4A03-B910FE885296896E.jpg");
-    background-repeat: no-repeat;
-    background-size: cover; */
+svg {
+    padding-top: auto;
+    position: static;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
 }
 
-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
 
 path:hover {
     fill:blue;
