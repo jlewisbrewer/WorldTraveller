@@ -21,7 +21,6 @@ class Application extends React.Component {
 
   onMouseClick(e) {
     let countryName = e.target.className.baseVal;
-    console.log(countryName);
 
     if (countryName) {
       client({
@@ -52,7 +51,6 @@ class Application extends React.Component {
           this.setState({
             selectedCountryArea: this.calculateSelectedArea(),
           });
-          console.log(this.state.selectedCountryArea);
           let paths = d3.select("#worldMapSVG").selectAll("." + countryName);
 
           paths.style("fill", "blue");
