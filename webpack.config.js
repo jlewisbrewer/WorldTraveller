@@ -3,7 +3,6 @@ var path = require('path');
 module.exports = {
     entry: './src/main/js/app.js',
     devtool: 'source-map',
-    watch: true,
     watchOptions: {
         poll: true,
         ignored: /node_modules/
