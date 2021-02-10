@@ -12,8 +12,7 @@ maintained.
 
 ## Development
 
-To run in development mode, navigate to the root of the project and type `mvn spring-boot:run` into a terminal. To run the frontend, open a new terminal and
-from the project root type `webpack`. Navigate to http://localhost:8080 in your browser to access the project.
+To run in development mode, navigate to the root of the project and type `mvn spring-boot:run` into a terminal. Navigate to http://localhost:8080 in your browser to access the project.
 
 
 ## License
