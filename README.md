@@ -17,3 +17,4 @@ from the project root type `webpack`. Navigate to http://localhost:8080 in your 
 
 
 ## License
+This project is available as open source under the terms of the [MIT license](https://opensource.org/licenses/MIT).
