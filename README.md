@@ -4,7 +4,7 @@
 
 WorldTraveller is a complete web application that enables users to click on a map of the world and then display to them the percentage of the world
 that they have visited. It features an in-memory database to preload country information on the backend which is queried by the frontend. User data is not 
-maintained.
+maintained. A static page version can be found [here](https://jlewisbrewer.github.io/worldtraveller-static/).
 
 ## Preview
 
