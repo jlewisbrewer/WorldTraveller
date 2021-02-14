@@ -1,7 +1,5 @@
 "use strict";
 
-import worldMapSVG from "../resources/templates/images/world-map-outline.svg";
-
 const React = require("react");
 const ReactDOM = require("react-dom");
 const client = require("./client");
