@@ -30,6 +30,14 @@ svg {
   width: 100%;
 }
 
+.unselected {
+  fill:#ececec;
+}
+
+.selected {
+  fill: blue;
+}
+
 path:hover {
   fill: blue;
 }
