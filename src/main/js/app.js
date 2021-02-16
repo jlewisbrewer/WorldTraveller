@@ -1,4 +1,5 @@
 "use strict";
+import ReactTooltip from "react-tooltip";
 import CountrySVG from "./components/countrysvg.js";
 import SvgComponent from "./components/countrysvg.js";
 
@@ -13,16 +14,31 @@ class Application extends React.Component {
     super(props);
     this.state = {
       totalArea: 0,
+      selectedCountry: null,
       selectedCountryArea: 0,
       selectedCountries: new Set(),
     };
     this.onMouseClick = this.onMouseClick.bind(this);
+    this.onMouseOver = this.onMouseOver.bind(this);
+  }
+
+  onMouseOver(e) {
+    let target = e.target.id;
+    try {
+      if (target) {
+        this.setState({
+          selectedCountry: target.replace("_", " ")
+        });
+        let paths = d3.select("#worldSVG").selectAll("#" + target);
+        paths.attr("data-for", "showCountryName");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   onMouseClick(e) {
     let countryName = e.target.id;
-
-    console.log(countryName);
 
     if (countryName) {
       client({
@@ -34,7 +50,6 @@ class Application extends React.Component {
         if (this.selectedCountryContains(country.id)) {
           // unfill it
           let paths = d3.select("#worldMapSVG").selectAll("#" + countryName);
-          console.log(paths);
 
           paths.attr("class", "unselected");
 
@@ -89,10 +104,14 @@ class Application extends React.Component {
 
   render() {
     const selectedArea = this.state.selectedCountryArea;
+    const selectedCountry = this.state.selectedCountry;
 
     return (
       <div className="app">
-        <CountrySVG onMouseClick={this.onMouseClick} />
+        <CountrySVG onMouseClick={this.onMouseClick} onMouseOver={this.onMouseOver}/>
+        <ReactTooltip>
+          {selectedCountry}
+        </ReactTooltip>
         <div ref="elem" className="container">
           <h3>You have visited {selectedArea}% of the world!</h3>
         </div>
